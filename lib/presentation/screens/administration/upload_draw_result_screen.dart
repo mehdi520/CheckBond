@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:check_bond/data/models/bonds/data_model/sch_bond_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
 import 'package:check_bond/infra/loader/overlay_service.dart';
 import 'package:check_bond/infra/utils/toast_utils.dart';
 import 'package:check_bond/presentation/common_widgets/app_bars/basic_app_bar.dart';
+import 'package:check_bond/presentation/common_widgets/text_ctl/body_medium_text.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 
 class UploadDrawResultScreen extends ConsumerStatefulWidget {
-  final SchBondDataModel data;
+  final DrawDataModel data;
   final OverlayService _loadingService = OverlayService();
 
   UploadDrawResultScreen({super.key, required this.data});
@@ -115,6 +116,7 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
       ),
       child: Column(
         children: [
+
           Row(
             children: [
               Container(
@@ -308,6 +310,9 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              BodyMediumText(contentText: "Draw Id : ${ widget.data.drawId}"),
+              BodyMediumText(contentText: "Bond type Id : ${ widget.data.bondTypeId}"),
+
               _buildUploadArea(),
             ],
           ),

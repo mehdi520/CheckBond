@@ -65,7 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       
       if (!_isInitialized) {
         _isInitialized = true;
-        ref.read(bondProvider.notifier).getRecordsAvailableYears();
+        ref.read(bondProvider.notifier).getBondTypes();
       }
     });
   }
@@ -85,7 +85,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Consumer(
             builder: (context, ref, child) {
               final bondsYears = ref.watch(
-                bondProvider.select((state) => state.dataYears),
+                bondProvider.select((state) => state.bondTypes),
               );
               return ListView.separated(
                 padding: const EdgeInsets.all(16),

@@ -1,6 +1,7 @@
 import 'package:check_bond/data/models/auth_models/response_model/login/login_res_model.dart';
 import 'package:check_bond/data/models/auth_models/sign_up_req_model.dart';
-import 'package:check_bond/data/models/bonds/resp_model/get_sch_bonds_by_year_res_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
+import 'package:check_bond/data/models/bonds/resp_model/get_draws_by_type_res_model.dart';
 import 'package:check_bond/data/models/common_models/base_response_model.dart';
 import 'package:check_bond/data/models/user/req_model/pass_change_req_model.dart';
 import 'package:check_bond/data/models/user/req_model/update_profile_req_model.dart';
@@ -10,7 +11,7 @@ import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../../models/bonds/resp_model/get_records_avail_years_res_model.dart';
+import '../../models/bonds/resp_model/get_bond_types_res_model.dart';
 
 part 'api_service.g.dart';
 
@@ -41,12 +42,17 @@ abstract class ApiService {
     @Body() required PassChangeReqModel req,
   });
 
-  @GET('api/bonds/GetRecordsAvailableYears')
-  Future<HttpResponse<GetRecordsAvailYearsResModel>> GetRecordsAvailableYears();
+  @GET('api/bonds/GetBondTypes')
+  Future<HttpResponse<GetBondTypesResModel>> GetBondTypes();
 
-  @GET('api/bonds/GetScheduleDrawByYear')
-  Future<HttpResponse<GetSchBondsByYearResModel>> GetScheduleBondByYear({
-    @Query('yearId') required int yearId
+  @GET('api/bonds/GetDrawsByBondType')
+  Future<HttpResponse<GetDrawsByTypeResModel>> GetDrawsByType({
+    @Query('bondType') required int bondType
+  });
+
+  @POST('api/bonds/AddUpdateDrawsByBondType')
+  Future<HttpResponse<BaseResponseModel>> AddUpdateDrawsByBondType({
+    @Body() required DrawDataModel req
   });
 
 }

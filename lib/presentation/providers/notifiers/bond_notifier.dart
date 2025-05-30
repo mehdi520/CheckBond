@@ -1,3 +1,4 @@
+import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
 import 'package:check_bond/data/models/common_models/base_response_model.dart';
 import 'package:check_bond/domain/bond/usecase/bond_usecases.dart';
 import 'package:check_bond/presentation/providers/states/bond_state.dart';
@@ -11,28 +12,28 @@ class BondNotifier extends StateNotifier<BondState> {
 
   BondNotifier(this._usecases) : super(const BondState());
 
-  Future<void> getRecordsAvailableYears() async {
+  Future<void> getBondTypes() async {
     state = state.copyWith(
       apiStatus: ApiStatus.loading,
-      apiIdentifier: 'getRecordsAvailableYears',
+      apiIdentifier: 'getBondTypes',
     );
     try {
-      final Either returnedData = await _usecases.getRecordsAvailableYears();
+      final Either returnedData = await _usecases.getBondTypes();
       returnedData.fold(
         (error) {
           print(error);
           state = state.copyWith(
             apiStatus: ApiStatus.error,
             resp: error,
-            apiIdentifier: 'getRecordsAvailableYears',
+            apiIdentifier: 'getBondTypes',
           );
         },
         (data) {
           state = state.copyWith(
             apiStatus: ApiStatus.success,
             resp: null,
-            dataYears: data.data,
-            apiIdentifier: 'getRecordsAvailableYears',
+            bondTypes: data.data,
+            apiIdentifier: 'getBondTypes',
           );
         },
       );
@@ -40,33 +41,33 @@ class BondNotifier extends StateNotifier<BondState> {
       state = state.copyWith(
         apiStatus: ApiStatus.error,
         resp: BaseResponseModel(status: false, message: e.toString()),
-        apiIdentifier: 'getRecordsAvailableYears',
+        apiIdentifier: 'getBondTypes',
       );
     }
   }
 
-  Future<void> getSchBondsByYear(int yearId) async {
+  Future<void> getDrawsByType(int bondTypeId) async {
     state = state.copyWith(
       apiStatus: ApiStatus.loading,
-      apiIdentifier: 'getSchBondsByYear',
+      apiIdentifier: 'getDrawsByType',
     );
     try {
-      final Either returnedData = await _usecases.getSchBondsByYear(yearId);
+      final Either returnedData = await _usecases.getDrawsByType(bondTypeId);
       returnedData.fold(
             (error) {
           print(error);
           state = state.copyWith(
             apiStatus: ApiStatus.error,
             resp: error,
-            apiIdentifier: 'getSchBondsByYear',
+            apiIdentifier: 'getDrawsByType',
           );
         },
             (data) {
           state = state.copyWith(
             apiStatus: ApiStatus.success,
             resp: null,
-            schBonds: data.data,
-            apiIdentifier: 'getSchBondsByYear',
+            draws: data.data,
+            apiIdentifier: 'getDrawsByType',
           );
         },
       );
@@ -74,7 +75,40 @@ class BondNotifier extends StateNotifier<BondState> {
       state = state.copyWith(
         apiStatus: ApiStatus.error,
         resp: BaseResponseModel(status: false, message: e.toString()),
-        apiIdentifier: 'getSchBondsByYear',
+        apiIdentifier: 'getDrawsByType',
+      );
+    }
+  }
+
+  Future<void> addUpdateDrawsByBondType(DrawDataModel req) async {
+    state = state.copyWith(
+      apiStatus: ApiStatus.loading,
+      apiIdentifier: 'addUpdateDrawsByBondType',
+    );
+    try {
+      final Either returnedData = await _usecases.addUpdateDrawsByBondType(req);
+      returnedData.fold(
+            (error) {
+          print(error);
+          state = state.copyWith(
+            apiStatus: ApiStatus.error,
+            resp: error,
+            apiIdentifier: 'addUpdateDrawsByBondType',
+          );
+        },
+            (data) {
+          state = state.copyWith(
+            apiStatus: ApiStatus.success,
+            resp: data,
+            apiIdentifier: 'addUpdateDrawsByBondType',
+          );
+        },
+      );
+    } catch (e) {
+      state = state.copyWith(
+        apiStatus: ApiStatus.error,
+        resp: BaseResponseModel(status: false, message: e.toString()),
+        apiIdentifier: 'addUpdateDrawsByBondType',
       );
     }
   }

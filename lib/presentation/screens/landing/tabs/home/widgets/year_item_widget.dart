@@ -1,11 +1,11 @@
-import 'package:check_bond/data/models/bonds/data_model/record_avail_year_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/bond_type_data_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../infra/configs/config_exports.dart';
 import '../../../../../common_widgets/text_ctl/text_exports.dart';
 
 class YearItemWidget extends StatelessWidget {
-  final RecordAvailYearDataModel data;
+  final BondTypeDataModel data;
    YearItemWidget({super.key,required this.data});
 
   @override
@@ -49,7 +49,7 @@ class YearItemWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TitleMediumText(contentText: data.year.toString()),
+                  TitleMediumText(contentText: data.bondType.toString()),
                 ],
               ),
             ),

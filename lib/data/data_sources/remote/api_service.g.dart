@@ -14,7 +14,7 @@ class _ApiService implements ApiService {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://budgetcare-apis.mehdibalti.com/';
+    baseUrl ??= 'https://localhost:7286/';
   }
 
   final Dio _dio;
@@ -202,33 +202,31 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<GetRecordsAvailYearsResModel>>
-      GetRecordsAvailableYears() async {
+  Future<HttpResponse<GetBondTypesResModel>> GetBondTypes() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options =
-        _setStreamType<HttpResponse<GetRecordsAvailYearsResModel>>(Options(
+    final _options = _setStreamType<HttpResponse<GetBondTypesResModel>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'api/bonds/GetRecordsAvailableYears',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            )));
+        .compose(
+          _dio.options,
+          'api/bonds/GetBondTypes',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late GetRecordsAvailYearsResModel _value;
+    late GetBondTypesResModel _value;
     try {
-      _value = GetRecordsAvailYearsResModel.fromJson(_result.data!);
+      _value = GetBondTypesResModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -238,21 +236,21 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<HttpResponse<GetSchBondsByYearResModel>> GetScheduleBondByYear(
-      {required int yearId}) async {
+  Future<HttpResponse<GetDrawsByTypeResModel>> GetDrawsByType(
+      {required int bondType}) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'yearId': yearId};
+    final queryParameters = <String, dynamic>{r'bondType': bondType};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
-        _setStreamType<HttpResponse<GetSchBondsByYearResModel>>(Options(
+        _setStreamType<HttpResponse<GetDrawsByTypeResModel>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'api/bonds/GetScheduleDrawByYear',
+              'api/bonds/GetDrawsByBondType',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -262,9 +260,45 @@ class _ApiService implements ApiService {
               baseUrl,
             )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late GetSchBondsByYearResModel _value;
+    late GetDrawsByTypeResModel _value;
     try {
-      _value = GetSchBondsByYearResModel.fromJson(_result.data!);
+      _value = GetDrawsByTypeResModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<BaseResponseModel>> AddUpdateDrawsByBondType(
+      {required DrawDataModel req}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(req.toJson());
+    final _options = _setStreamType<HttpResponse<BaseResponseModel>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'api/bonds/AddUpdateDrawsByBondType',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponseModel _value;
+    try {
+      _value = BaseResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

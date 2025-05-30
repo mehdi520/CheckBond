@@ -1,23 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_sch_bonds_by_year_res_model.dart';
+part of 'get_bond_types_res_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-GetSchBondsByYearResModel _$GetSchBondsByYearResModelFromJson(
+GetBondTypesResModel _$GetBondTypesResModelFromJson(
         Map<String, dynamic> json) =>
-    GetSchBondsByYearResModel(
+    GetBondTypesResModel(
       status: json['status'] as bool,
       message: json['message'] as String?,
       data: (json['data'] as List<dynamic>?)
-          ?.map((e) => SchBondDataModel.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => BondTypeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$GetSchBondsByYearResModelToJson(
-        GetSchBondsByYearResModel instance) =>
+Map<String, dynamic> _$GetBondTypesResModelToJson(
+        GetBondTypesResModel instance) =>
     <String, dynamic>{
       'status': instance.status,
       'message': instance.message,

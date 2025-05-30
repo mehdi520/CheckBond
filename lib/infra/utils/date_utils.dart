@@ -13,4 +13,13 @@ class DateUtil {
       return isoDateString; // or return ''
     }
   }
+
+  static formatDisplayDateToServer(DateTime picked) {
+    try {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      return formatter.format(picked);
+    } catch (e) {
+      return "Invalid date"; // or return ''
+    }
+  }
 }

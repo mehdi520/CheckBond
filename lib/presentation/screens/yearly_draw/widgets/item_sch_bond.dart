@@ -1,4 +1,4 @@
-import 'package:check_bond/data/models/bonds/data_model/sch_bond_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
 import 'package:check_bond/infra/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +6,7 @@ import '../../../../infra/configs/config_exports.dart';
 import '../../../common_widgets/text_ctl/text_exports.dart';
 
 class ItemSchBond extends StatelessWidget {
-  final SchBondDataModel data;
+  final DrawDataModel data;
   const ItemSchBond({super.key, required this.data});
 
   @override
@@ -46,22 +46,22 @@ class ItemSchBond extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    TitleMediumText(contentText: 'Rs. ${data.amount}'),
-                    BodySmallText(contentText: data.isPremium ? ' (Premium)' : ''),
+                    TitleMediumText(contentText: 'Rs. ${data.bondType}'),
+                  //  BodySmallText(contentText: data.isPremium ? ' (Premium)' : ''),
 
                   ],
                 ),
                 const SizedBox(height: 4),
                 BodyMediumText(
-                  contentText: 'Date: ${ DateUtil.formatToDisplayDate(data.date)}',
+                  contentText: 'Date: ${ DateUtil.formatToDisplayDate(data.drawDate ?? "")}',
                   textColor: Colors.black87,
                 ),
                 BodyMediumText(contentText: 'Day: ${data.day} '),
                 BodyMediumText(contentText: 'Place: ${data.place}'),
                 const SizedBox(height: 4),
                 BodyMediumText(
-                  contentText: data.isAnnounced ? 'Result Announced' : 'Upcoming',
-                  textColor: data.isAnnounced ?  Colors.green : Colors.blue,
+                  contentText: data.isResultAnnounced ? 'Result Announced' : 'Upcoming',
+                  textColor: data.isResultAnnounced ?  Colors.green : Colors.blue,
                 ),
               ],
             ),

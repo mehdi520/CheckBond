@@ -1,5 +1,5 @@
-import 'package:check_bond/data/models/bonds/data_model/record_avail_year_data_model.dart';
-import 'package:check_bond/data/models/bonds/data_model/sch_bond_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/bond_type_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
 import 'package:check_bond/presentation/screens/administration/upload_draw_result_screen.dart';
 import 'package:check_bond/presentation/screens/draw_result/draw_result_screen.dart';
 import 'package:check_bond/presentation/screens/landing/landing_screen/landing_screen.dart';
@@ -35,17 +35,17 @@ class AppRoutes {
         return MaterialPageRoute(builder: (context) => LandingScreen());
       case yearly_drawRoute:
         final args = settings.arguments as Map<String, dynamic>;
-        final data = args['data'] as RecordAvailYearDataModel;
+        final data = args['data'] as BondTypeDataModel;
         return MaterialPageRoute(builder: (context) => YearlyDrawListScreen(data: data));
 
       case draw_resultRoute:
         final args = settings.arguments as Map<String, dynamic>;
-        final data = args['data'] as SchBondDataModel;
+        final data = args['data'] as DrawDataModel;
         return MaterialPageRoute(builder: (context) => DrawResultScreen(data: data));
 
       case upload_draw_resultRoute:
         final args = settings.arguments as Map<String, dynamic>;
-        final data = args['data'] as SchBondDataModel;
+        final data = args['data'] as DrawDataModel;
         return MaterialPageRoute(builder: (context) => UploadDrawResultScreen(data: data));
 
       default:

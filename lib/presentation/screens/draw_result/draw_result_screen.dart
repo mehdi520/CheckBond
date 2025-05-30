@@ -1,4 +1,4 @@
-import 'package:check_bond/data/models/bonds/data_model/sch_bond_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
 import 'package:check_bond/presentation/common_widgets/app_bars/basic_app_bar.dart';
 import 'package:check_bond/presentation/common_widgets/text_ctl/body_medium_text.dart';
 import 'package:check_bond/presentation/common_widgets/text_ctl/text_exports.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 String normalize(String s) => s.replaceAll(RegExp(r'^0+'), '').trim();
 
 class DrawResultScreen extends ConsumerStatefulWidget {
-  final SchBondDataModel data;
+  final DrawDataModel data;
 
   const DrawResultScreen({super.key, required this.data});
 
