@@ -1,8 +1,8 @@
 // import 'dart:io' show Platform;
 // import 'package:flutter/foundation.dart' show kIsWeb;
 
-// const String APIBaseURL = 'https://budgetcare-apis.mehdibalti.com/';
-const String APIBaseURL = 'https://localhost:7286/';
+const String APIBaseURL = 'https://budgetcare-apis.mehdibalti.com/';
+// const String APIBaseURL = 'https://localhost:7286/';
 
 //
 // // This is just a placeholder for the @RestApi annotation

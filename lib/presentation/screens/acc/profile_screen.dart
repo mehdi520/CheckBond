@@ -1,50 +1,65 @@
+import 'package:check_bond/data/data_sources/local/hive_manager.dart';
+import 'package:check_bond/data/models/user/req_model/update_profile_req_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../infra/configs/theme/app_colors.dart';
-import '../../../../infra/utils/utils_exports.dart';
-import '../../../common_widgets/form_field_with_label/text_input_form_field.dart';
-import '../../../common_widgets/text_ctl/text_exports.dart';
-import '../../../providers/providers/auth_provider.dart';
-import '../../../providers/states/auth_state.dart';
-import '../../../../data/models/auth_models/sign_up_req_model.dart';
-import '../../../../infra/loader/overlay_service.dart';
-import '../../../../infra/utils/toast_utils.dart';
+import '../../../infra/configs/theme/app_colors.dart';
+import '../../../infra/utils/utils_exports.dart';
+import '../../../infra/loader/overlay_service.dart';
+import '../../../infra/utils/toast_utils.dart';
+import '../../common_widgets/form_field_with_label/text_input_form_field.dart';
+import '../../common_widgets/form_field_with_label/date_picker_form_field.dart';
+import '../../common_widgets/text_ctl/text_exports.dart';
+import '../../providers/providers/auth_provider.dart';
+import '../../providers/states/auth_state.dart';
+import '../../../data/models/auth_models/sign_up_req_model.dart';
 
-class SignupScreen extends ConsumerStatefulWidget {
-  const SignupScreen({super.key});
+class ProfileScreen extends ConsumerStatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  ConsumerState<SignupScreen> createState() => _SignupScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _SignupScreenState extends ConsumerState<SignupScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _dateController = TextEditingController();
   final _loadingService = OverlayService();
+
+  @override
+  void initState() {
+    super.initState();
+    // TODO: Load user profile data
+    _loadUserProfile();
+  }
+
+  void _loadUserProfile() {
+    var user = HiveManager.getUserJson();
+    _nameController.text = user?.name ?? '';
+    _emailController.text = user?.email ?? '';
+    _phoneController.text = user?.phone ?? '';
+    _dateController.text = user?.createdAt ?? '';
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
-  void _handleSignup() {
+  void _handleUpdateProfile() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authProvider.notifier).signup(
-        SignUpReqModel(
+      ref.read(authProvider.notifier).updateProfile(
+        UpdateProfileReqModel(
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
           phone: _phoneController.text.trim(),
-          password: _passwordController.text,
         ),
       );
     }
@@ -58,16 +73,20 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       }
       if (next.apiStatus == ApiStatus.success) {
         _loadingService.hideLoadingOverlay();
-        ToastUtils.showSuccess('Account created successfully');
-        Navigator.pop(context); // Navigate back to login screen
+        ToastUtils.showSuccess('Profile updated successfully');
       }
       if (next.apiStatus == ApiStatus.error) {
         _loadingService.hideLoadingOverlay();
-        ToastUtils.showError(next.resp?.message ?? 'Signup failed');
+        ToastUtils.showError(next.resp?.message ?? 'Profile update failed');
       }
     });
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -76,18 +95,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 60),
-                // Header
-                const TitleLargeText(
-                  contentText: 'Create Account',
-                  textStyle: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                const BodyMediumText(
-                  contentText: 'Please fill in the details to create your account',
-                  textColor: AppColors.textSecondary,
-                ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
                 // Name Field
                 TextInputFormField(
                   ctrl: _nameController,
@@ -136,49 +144,24 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                // Password Field
-                TextInputFormField(
-                  ctrl: _passwordController,
-                  formLabel: 'Password',
-                  hintText: 'Enter your password',
-                  keyboardType: TextInputType.visiblePassword,
-                  imeAction: TextInputAction.next,
-                  isSecureTextField: true,
+                // Joined Date Field (Read-only)
+                DatePickerFormField(
+                  label: 'Joined Date',
+                  hint: 'Select date',
+                  controller: _dateController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                // Confirm Password Field
-                TextInputFormField(
-                  ctrl: _confirmPasswordController,
-                  formLabel: 'Confirm Password',
-                  hintText: 'Confirm your password',
-                  keyboardType: TextInputType.visiblePassword,
-                  imeAction: TextInputAction.done,
-                  isSecureTextField: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return 'Date is required';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 32),
-                // Sign Up Button
+                // Update Profile Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _handleSignup,
+                    onPressed: _handleUpdateProfile,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
@@ -187,29 +170,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Sign Up'),
+                    child: const Text('Update Profile'),
                   ),
-                ),
-                const SizedBox(height: 24),
-                // Already have account
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const BodyMediumText(
-                      contentText: 'Already have an account?',
-                      textColor: AppColors.textSecondary,
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

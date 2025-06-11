@@ -1,9 +1,20 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:check_bond/data/models/bonds/data_model/analyzed_data_model.dart';
 import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/draw_details_data_model.dart';
+import 'package:check_bond/infra/configs/config_exports.dart';
 import 'package:check_bond/infra/loader/overlay_service.dart';
+import 'package:check_bond/infra/utils/enums.dart';
+import 'package:check_bond/infra/utils/gson_utils.dart';
 import 'package:check_bond/infra/utils/toast_utils.dart';
 import 'package:check_bond/presentation/common_widgets/app_bars/basic_app_bar.dart';
+import 'package:check_bond/presentation/common_widgets/buttons/PrimaryButton.dart';
+import 'package:check_bond/presentation/common_widgets/form_field_with_label/date_picker_form_field.dart';
+import 'package:check_bond/presentation/common_widgets/form_field_with_label/text_input_form_field.dart';
 import 'package:check_bond/presentation/common_widgets/text_ctl/body_medium_text.dart';
+import 'package:check_bond/presentation/providers/providers/bond_provider.dart';
+import 'package:check_bond/presentation/screens/administration/anaylze_draw_result_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +38,72 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
   int? _fileSize;
   String? _fileType;
   bool _isAnalyzing = false;
+  ProviderSubscription? _subscription;
+
+  final _formKey = GlobalKey<FormState>();
+  final _dateController = TextEditingController();
+  final _drawNumberController = TextEditingController();
+  final _firstPrizeController = TextEditingController();
+  final _secondPrizeController = TextEditingController();
+  final _thirdPrizeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _subscription = ref.listenManual(bondProvider, (previous, next) {
+      if (next.apiIdentifier == 'analyzeDrawUpload') {
+        if (next.apiStatus == ApiStatus.success) {
+          widget._loadingService.hideLoadingOverlay();
+          final analyzedData = next.analyzeResult;
+          if (analyzedData != null) {
+            try {
+              final jsonString = analyzedData.data.json;
+              final drawDetails = GsonUtils.fromJson(jsonString, DrawDetailsDataModel.fromJson);
+              if (drawDetails != null) {
+
+                Navigator.pushNamed(
+                    context,
+                    AppRoutes.analyze_draw_result,
+                    arguments: {
+                      'result': analyzedData,
+                      'data': drawDetails,
+                    }
+                );
+              } else {
+                ToastUtils.showError('Failed to parse draw details');
+              }
+            } catch (e) {
+              ToastUtils.showError('Error processing draw details: ${e.toString()}');
+            }
+          } else {
+            ToastUtils.showError('No data received from server');
+          }
+        } else if (next.apiStatus == ApiStatus.error) {
+          widget._loadingService.hideLoadingOverlay();
+          ToastUtils.showError(next.resp?.message ?? 'Failed to analyze file');
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.close();
+    _dateController.dispose();
+    _drawNumberController.dispose();
+    _firstPrizeController.dispose();
+    _secondPrizeController.dispose();
+    _thirdPrizeController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickFile() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
-        dialogTitle: 'Select a file',
+        dialogTitle: 'Select an Excel file',
+        type: FileType.custom,
+        allowedExtensions: ['xls', 'xlsx'],
         withData: true,
       );
 
@@ -42,6 +113,12 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
           final size = await file.length();
           if (size > 10 * 1024 * 1024) {
             ToastUtils.showError('File size exceeds 10MB limit');
+            return;
+          }
+
+          final extension = result.files.single.extension?.toLowerCase();
+          if (extension != 'xls' && extension != 'xlsx') {
+            ToastUtils.showError('Only Excel files (.xls, .xlsx) are allowed');
             return;
           }
 
@@ -61,7 +138,14 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
   }
 
   Future<void> _handleAnalyze() async {
-    if (_selectedFile == null) return;
+    if (_selectedFile == null) {
+      ToastUtils.showError('Please select a file first');
+      return;
+    }
+
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     setState(() {
       _isAnalyzing = true;
@@ -71,6 +155,12 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
       widget._loadingService.showLoadingOverlay(context);
       
       final formData = FormData.fromMap({
+        'draw_id': widget.data.drawId,
+        'draw_no': int.parse(_drawNumberController.text),
+        'first_prize_worth': _firstPrizeController.text,
+        'second_prize_worth': _secondPrizeController.text,
+        'third_prize_worth': _thirdPrizeController.text,
+        'draw_date': _dateController.text,
         'file': await MultipartFile.fromFile(
           _selectedFile!.path,
           filename: _fileName,
@@ -82,11 +172,9 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
         ),
       });
 
-      // TODO: Replace with your actual API call
-      // final response = await ref.read(uploadProvider.notifier).analyzeFile(formData);
+      await ref.read(bondProvider.notifier).analyzeDrawUpload(formData);
       
       widget._loadingService.hideLoadingOverlay();
-      ToastUtils.showSuccess('File analyzed successfully');
     } catch (e) {
       widget._loadingService.hideLoadingOverlay();
       ToastUtils.showError('Failed to analyze file: ${e.toString()}');
@@ -252,13 +340,13 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
                       _buildSelectedFileDisplay(),
                     ] else ...[
                       Icon(
-                        Icons.cloud_upload_outlined,
+                        Icons.table_chart_outlined,
                         size: 48,
                         color: Colors.grey[400],
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Drag and drop your file here',
+                        'Drag and drop your Excel file here',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[600],
@@ -267,7 +355,7 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Upload a CSV or Excel file. Maximum file size: 10MB',
+                        'Upload an Excel file (.xls, .xlsx). Maximum file size: 10MB',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[500],
@@ -307,14 +395,119 @@ class _UploadDrawResultScreenState extends ConsumerState<UploadDrawResultScreen>
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BodyMediumText(contentText: "Draw Id : ${ widget.data.drawId}"),
-              BodyMediumText(contentText: "Bond type Id : ${ widget.data.bondTypeId}"),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      DatePickerFormField(
+                        label: 'Draw Date',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Date is required';
+                          }
+                          return null;
+                        },
+                        hint: 'Select draw date',
+                        controller: _dateController,
+                      ),
+                      const SizedBox(height: 16),
+                      TextInputFormField(
+                        ctrl: _drawNumberController,
+                        formLabel: 'Draw Number',
+                        hintText: 'Enter the Draw number',
+                        imeAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Draw number is required';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'Draw number must be a number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextInputFormField(
+                        ctrl: _firstPrizeController,
+                        formLabel: 'First Prize Worth',
+                        hintText: 'Enter first prize amount',
+                        imeAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'First prize amount is required';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'First prize amount must be a number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextInputFormField(
+                        ctrl: _secondPrizeController,
+                        formLabel: 'Second Prize Worth',
+                        hintText: 'Enter second prize amount',
+                        imeAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Second prize amount is required';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'Second prize amount must be a number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextInputFormField(
+                        ctrl: _thirdPrizeController,
+                        formLabel: 'Third Prize Worth',
+                        hintText: 'Enter third prize amount',
+                        imeAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Third prize amount is required';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'Third prize amount must be a number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
 
-              _buildUploadArea(),
-            ],
+                      _buildUploadArea(),
+                      const SizedBox(height: 24),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: PrimaryButton(
+                          text: 'Analyze',
+                          onTap: _handleAnalyze,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: PrimaryButton(
+                          text: 'SynDraw Result',
+                          onTap: () async{
+                            await ref.read(bondProvider.notifier).DrawWinCheckSyncByDraw(widget.data.drawId);
+
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,3 +1,5 @@
+import 'package:check_bond/data/models/user/req_model/pass_change_req_model.dart';
+import 'package:check_bond/data/models/user/req_model/update_profile_req_model.dart';
 import 'package:check_bond/domain/auth/usecase/auth_usecases.dart';
 import 'package:check_bond/presentation/providers/states/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,4 +59,51 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
+  Future<void> updateProfile(UpdateProfileReqModel req) async {
+    state = state.copyWith(apiStatus: ApiStatus.loading);
+    try {
+      final Either returnedData = await _authUsecases.updateProfile(params: req);
+      returnedData.fold(
+            (error) {
+          print(error);
+          state = state.copyWith(
+            apiStatus: ApiStatus.error,
+            resp: LoginResModel(status: false, message: error.message),
+          );
+        },
+            (data) {
+          state = state.copyWith(apiStatus: ApiStatus.success, resp: data);
+        },
+      );
+    } catch (e) {
+      state = state.copyWith(
+        apiStatus: ApiStatus.error,
+        resp: LoginResModel(status: false, message: e.toString()),
+      );
+    }
+  }
+  Future<void> changePassword(PassChangeReqModel req) async {
+    state = state.copyWith(apiStatus: ApiStatus.loading);
+    try {
+      final Either returnedData = await _authUsecases.changePass(params: req);
+      returnedData.fold(
+            (error) {
+          print(error);
+          state = state.copyWith(
+            apiStatus: ApiStatus.error,
+            resp: LoginResModel(status: false, message: error.message),
+          );
+        },
+            (data) {
+          state = state.copyWith(apiStatus: ApiStatus.success, resp: data);
+        },
+      );
+    } catch (e) {
+      state = state.copyWith(
+        apiStatus: ApiStatus.error,
+        resp: LoginResModel(status: false, message: e.toString()),
+      );
+    }
+  }
+
 }

@@ -82,7 +82,9 @@ class YearlyDrawListScreen extends ConsumerWidget {
               final draw = bondsYears[index];
               return InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.draw_resultRoute);
+                  Navigator.pushNamed(context, AppRoutes.draw_resultRoute,arguments: {
+                    'data' : draw
+                  });
                 },
                 onLongPress: () {
                   final user = HiveManager.getUserJson();

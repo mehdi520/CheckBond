@@ -12,7 +12,6 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserModel? loggedInUser = HiveManager.getUserJson();
 
-
     void _handleLogout(BuildContext context) {
       showDialog(
         context: context,
@@ -42,7 +41,7 @@ class SideMenu extends StatelessWidget {
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     AppRoutes.loginRoute,
-                        (route) => false,
+                    (route) => false,
                   );
                 },
                 child: Text(
@@ -123,25 +122,6 @@ class SideMenu extends StatelessWidget {
                                       color: AppColors.white.withOpacity(0.8),
                                     ),
                                   ),
-                                  if (loggedInUser?.email != null) ...[
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.business,
-                                          size: 14,
-                                          color: AppColors.white.withOpacity(0.8),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          loggedInUser?.email ?? '',
-                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            color: AppColors.white.withOpacity(0.8),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
                                 ],
                               ),
                             ),
@@ -151,6 +131,53 @@ class SideMenu extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  // My Account
+                  SideMenuItem(
+                    icon: Icons.person_outline,
+                    title: 'My Account',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, AppRoutes.accRoute);
+                    },
+                  ),
+                  // // Category
+                  // SideMenuItem(
+                  //   icon: Icons.category_outlined,
+                  //   title: 'Category',
+                  //   onTap: () {
+                  //     Navigator.pop(context);
+                  //     Navigator.pushNamed(context, AppRoutes.categoryRoute);
+                  //   },
+                  // ),
+                  // // Income
+                  // SideMenuItem(
+                  //   icon: Icons.arrow_upward,
+                  //   title: 'Income',
+                  //   onTap: () {
+                  //     Navigator.pop(context);
+                  //     Navigator.pushNamed(context, AppRoutes.incomeRoute);
+                  //   },
+                  // ),
+                  // // Expense
+                  // SideMenuItem(
+                  //   icon: Icons.arrow_downward,
+                  //   title: 'Expense',
+                  //   onTap: () {
+                  //     Navigator.pop(context);
+                  //     Navigator.pushNamed(context, AppRoutes.expenseRoute);
+                  //   },
+                  // ),
+                  // Change Password
+                  SideMenuItem(
+                    icon: Icons.lock_outline,
+                    title: 'Change Password',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, AppRoutes.chnagePassRoute);
+                    //  Navigator.pushNamed(context, AppRoutes.changePasswordRoute);
+                    },
+                  ),
+                  // Logout
                   SideMenuItem(
                     icon: Icons.logout,
                     title: 'Logout',
@@ -163,22 +190,21 @@ class SideMenu extends StatelessWidget {
             ),
           ),
           Container(
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Version 1.0',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textLight,
-                    ),
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Version 1.0',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textLight,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-          SizedBox(height: 15,)
+          ),
+          const SizedBox(height: 15),
         ],
       ),
     );

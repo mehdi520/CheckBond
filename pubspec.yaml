@@ -50,6 +50,7 @@ dependencies:
   file_picker:
   dotted_border: ^2.1.0
   path_provider:
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
   flutter_test:

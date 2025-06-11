@@ -1,7 +1,12 @@
 import 'package:check_bond/data/models/auth_models/response_model/login/login_res_model.dart';
 import 'package:check_bond/data/models/auth_models/sign_up_req_model.dart';
 import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/user_bond_data_model.dart';
+import 'package:check_bond/data/models/bonds/resp_model/analyze_res_model.dart';
+import 'package:check_bond/data/models/bonds/resp_model/get_draw_result_res_model.dart';
 import 'package:check_bond/data/models/bonds/resp_model/get_draws_by_type_res_model.dart';
+import 'package:check_bond/data/models/bonds/resp_model/get_user_bonds_res_model.dart';
+import 'package:check_bond/data/models/bonds/resp_model/get_won_bounds_res_model.dart';
 import 'package:check_bond/data/models/common_models/base_response_model.dart';
 import 'package:check_bond/data/models/user/req_model/pass_change_req_model.dart';
 import 'package:check_bond/data/models/user/req_model/update_profile_req_model.dart';
@@ -53,6 +58,53 @@ abstract class ApiService {
   @POST('api/bonds/AddUpdateDrawsByBondType')
   Future<HttpResponse<BaseResponseModel>> AddUpdateDrawsByBondType({
     @Body() required DrawDataModel req
+  });
+
+  @POST('api/bonds/AnalyzeUploadNewDrawResult')
+  Future<HttpResponse<AnalyzeResModel>> AnalyzeUploadNewDrawResult({
+    @Body() required FormData formData,
+  });
+
+  @GET('api/bonds/ImportDrawResult')
+  Future<HttpResponse<BaseResponseModel>> ImportDrawResult({
+   @Query('id') required int id
+  });
+
+  @GET('api/bonds/GetDrawResult')
+  Future<HttpResponse<GetDrawResultResModel>> GetDrawResult({
+    @Query('id') required int id
+  });
+
+  @GET('api/bonds/GetUserBonds')
+  Future<HttpResponse<GetUserBondsResModel>> GetUserBonds({
+    @Query('typeId') required int typeId
+  });
+
+  @POST('api/bonds/AddUpdateUserBond')
+  Future<HttpResponse<BaseResponseModel>> AddupdateUseBonds({
+    @Body() required UserBondDataModel req
+  });
+
+
+  @GET('api/bonds/DeleteUserBond')
+  Future<HttpResponse<BaseResponseModel>> DelUserBonds({
+    @Query('bondId') required int bondId
+  });
+
+  @GET('api/bonds/DrawWinCheckSyncByDraw')
+  Future<HttpResponse<BaseResponseModel>> DrawWinCheckSyncByDraw({
+    @Query('drawId') required int drawId
+  });
+
+  @GET('api/bonds/GetUserWonBonds')
+  Future<HttpResponse<GetWonBoundsResModel>> GetUserWonBonds({
+    @Query('status') required String status
+  });
+
+  @GET('api/bonds/UpdateUserWonBondStatus')
+  Future<HttpResponse<BaseResponseModel>> UpdateUserWonBondStatus({
+    @Query('status') required String status,
+    @Query('wonId') required int wonId
   });
 
 }
