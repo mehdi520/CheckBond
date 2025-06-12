@@ -362,4 +362,33 @@ class BondRepositoryImpl extends BondRepository {
       );
     }
   }
+
+  @override
+  Future<Either> GetUserBondsSummary() async {
+    try {
+      final httpResponse = await _apiService.GetUserBondsSummary();
+
+      if (httpResponse.response.statusCode == HttpStatus.ok) {
+        print(httpResponse.response);
+        if (httpResponse.data.status) {
+          return Right(httpResponse.data);
+
+        } else {
+          return Left(
+              BaseResponseModel(status: false,message: httpResponse.data.message,code: httpResponse.response.statusCode)
+          );
+        }
+      } else {
+        print(httpResponse.response);
+        return Left(
+            BaseResponseModel(status: false,message: httpResponse.data.message,code: httpResponse.response.statusCode)
+        );
+      }
+    } on DioException catch (e) {
+      print(e);
+      return Left(
+          BaseResponseModel(status: false,message: e.message,code: e.response?.statusCode != null ? e.response?.statusCode : 0)
+      );
+    }
+  }
 }

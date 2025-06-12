@@ -1,7 +1,7 @@
 class AppImages {
   static const basePath = "assets/images/";
   static const formate = ".png";
-  static const logo = basePath + "app_icon" + formate;
+  static const logo = basePath + "de_logo" + formate;
   static const back = basePath + "back" + formate;
   static const profile_icon = '${basePath}profile$formate';
   static const menu = '${basePath}burger_menu$formate';

@@ -140,6 +140,15 @@ class SideMenu extends StatelessWidget {
                       Navigator.pushNamed(context, AppRoutes.accRoute);
                     },
                   ),
+                  SideMenuItem(
+                    icon: Icons.category_outlined,
+                    title: 'Bond Summary',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, AppRoutes.bondSummaryRoute);
+                    },
+                  ),
+
                   // // Category
                   // SideMenuItem(
                   //   icon: Icons.category_outlined,

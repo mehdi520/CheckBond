@@ -6,13 +6,15 @@ part 'user_bond_data_model.g.dart';
 class UserBondDataModel {
   int bondId;
   String bondNumber;
+  String? bondTypeName;
   int bondType;
   String createdAt;
   UserBondDataModel({
     required this.bondId,
     required this.bondNumber,
     required this.bondType,
-    required this.createdAt
+    required this.createdAt,
+     this.bondTypeName
 
   });
 

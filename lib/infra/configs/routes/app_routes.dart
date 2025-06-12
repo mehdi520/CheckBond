@@ -3,6 +3,7 @@ import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
 import 'package:check_bond/data/models/bonds/data_model/draw_details_data_model.dart';
 import 'package:check_bond/data/models/bonds/resp_model/analyze_res_model.dart';
 import 'package:check_bond/presentation/screens/acc/change_pass_screen.dart';
+import 'package:check_bond/presentation/screens/acc/my_bond_summary_screen.dart';
 import 'package:check_bond/presentation/screens/acc/profile_screen.dart';
 import 'package:check_bond/presentation/screens/administration/anaylze_draw_result_screen.dart';
 import 'package:check_bond/presentation/screens/administration/upload_draw_result_screen.dart';
@@ -29,6 +30,7 @@ class AppRoutes {
   static const String analyze_draw_result = '/analyze_draw_result';
   static const String accRoute = '/acc';
   static const String chnagePassRoute = '/chnagePassRoute';
+  static const String bondSummaryRoute = '/bondSummaryRoute';
 
 
   static Route? generateRoute(RouteSettings settings) {
@@ -68,6 +70,8 @@ class AppRoutes {
       case chnagePassRoute:
         return MaterialPageRoute(builder: (context) => ChangePassScreen());
 
+      case bondSummaryRoute:
+        return MaterialPageRoute(builder: (context) => MyBondSummaryScreen());
       default:
         return null;
     }

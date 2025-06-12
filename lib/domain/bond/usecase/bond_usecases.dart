@@ -57,5 +57,8 @@ class BondUsecases {
   Future<Either> UpdateUserWonBondStatus(String status, int wonId)async {
     return await _repository.UpdateUserWonBondStatus(status,wonId);
   }
+  Future<Either> GetUserBondsSummary()async {
+    return await _repository.GetUserBondsSummary();
+  }
 
 }

@@ -18,6 +18,9 @@ DrawDetailsDataModel _$DrawDetailsDataModelFromJson(
       bonds: (json['bonds'] as List<dynamic>?)
           ?.map((e) => BondDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      userWonBonds: (json['userWonBonds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$DrawDetailsDataModelToJson(
@@ -30,4 +33,5 @@ Map<String, dynamic> _$DrawDetailsDataModelToJson(
       'second_prize_worth': instance.second_prize_worth,
       'third_prize_worth': instance.third_prize_worth,
       'bonds': instance.bonds,
+      'userWonBonds': instance.userWonBonds,
     };

@@ -180,9 +180,9 @@ class _WonBondsScreenState extends ConsumerState<WonBondsScreen> with SingleTick
       if (status == ApiStatus.error) {
         ToastUtils.showError(message ?? "Something went wrong");
       }
-      if (status == ApiStatus.success && message != null) {
-        ToastUtils.showSuccess(message);
-      }
+      // if (status == ApiStatus.success && message != null) {
+      //   ToastUtils.showSuccess(message);
+      // }
     }
   }
 }

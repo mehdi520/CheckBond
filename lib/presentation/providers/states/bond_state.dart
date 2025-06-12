@@ -3,6 +3,7 @@ import 'package:check_bond/data/models/bonds/data_model/bond_type_data_model.dar
 import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
 import 'package:check_bond/data/models/bonds/data_model/draw_details_data_model.dart';
 import 'package:check_bond/data/models/bonds/data_model/user_bond_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/user_bond_summary_data_model.dart';
 import 'package:check_bond/data/models/bonds/data_model/won_bond_data_model.dart';
 import 'package:check_bond/data/models/bonds/resp_model/analyze_res_model.dart';
 import 'package:check_bond/data/models/common_models/base_response_model.dart';
@@ -19,6 +20,7 @@ class BondState {
   final DrawDetailsDataModel? drawResult;
   final List<UserBondDataModel> userBonds;
   final List<WonBondDataModel> userWonBonds;
+  final UserBondSummaryDataModel? summaryDataModel;
 
   const BondState({
     this.apiStatus = ApiStatus.initial,
@@ -30,6 +32,7 @@ class BondState {
     this.drawResult = null,
     this.userBonds = const [],
     this.userWonBonds = const [],
+    this.summaryDataModel = null
   });
 
   BondState copyWith({
@@ -42,6 +45,7 @@ class BondState {
     DrawDetailsDataModel? drawResult,
     List<UserBondDataModel>? userBonds,
     List<WonBondDataModel>? userWonBonds,
+    UserBondSummaryDataModel? summaryDataModel
   }) {
     return BondState(
       apiIdentifier: apiIdentifier ?? this.apiIdentifier,
@@ -53,6 +57,7 @@ class BondState {
       drawResult: drawResult,
       userBonds: userBonds ?? this.userBonds,
       userWonBonds: userWonBonds ?? this.userWonBonds,
+      summaryDataModel: summaryDataModel ?? this.summaryDataModel
     );
   }
 }

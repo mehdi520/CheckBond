@@ -19,5 +19,6 @@ abstract class BondRepository {
   Future<Either> DrawWinCheckSyncByDraw(int drawId);
   Future<Either> GetUserWonBonds(String status);
   Future<Either> UpdateUserWonBondStatus(String status, int wonId);
+  Future<Either> GetUserBondsSummary();
 
 }

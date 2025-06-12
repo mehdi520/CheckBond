@@ -58,7 +58,7 @@ class BondItemWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 BodyMediumText(
-                  contentText: 'Rs. 3434',
+                  contentText: "Rs ${data.bondTypeName}",
                   textColor: Colors.black87,
                 ),
                 const SizedBox(height: 4),

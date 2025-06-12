@@ -5,6 +5,7 @@ import 'package:check_bond/data/models/bonds/data_model/user_bond_data_model.dar
 import 'package:check_bond/data/models/bonds/resp_model/analyze_res_model.dart';
 import 'package:check_bond/data/models/bonds/resp_model/get_draw_result_res_model.dart';
 import 'package:check_bond/data/models/bonds/resp_model/get_draws_by_type_res_model.dart';
+import 'package:check_bond/data/models/bonds/resp_model/get_user_bond_summary_res_model.dart';
 import 'package:check_bond/data/models/bonds/resp_model/get_user_bonds_res_model.dart';
 import 'package:check_bond/data/models/bonds/resp_model/get_won_bounds_res_model.dart';
 import 'package:check_bond/data/models/common_models/base_response_model.dart';
@@ -106,5 +107,9 @@ abstract class ApiService {
     @Query('status') required String status,
     @Query('wonId') required int wonId
   });
+
+  @GET('api/bonds/GetUserBondsSummary')
+  Future<HttpResponse<GetUserBondSummaryResModel>> GetUserBondsSummary();
+
 
 }

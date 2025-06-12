@@ -462,4 +462,42 @@ class BondNotifier extends StateNotifier<BondState> {
     }
   }
 
+  Future<void> GetUserBondsSummary() async {
+    state = state.copyWith(
+      apiStatus: ApiStatus.loading,
+      drawResult: null,
+      apiIdentifier: 'GetUserBondsSummary',
+    );
+    try {
+      final Either returnedData = await _usecases.GetUserBondsSummary();
+      returnedData.fold(
+            (error) {
+          print(error);
+          state = state.copyWith(
+            apiStatus: ApiStatus.error,
+            resp: error,
+            drawResult: null,
+            apiIdentifier: 'GetUserBondsSummary',
+          );
+        },
+            (data) {
+
+          state = state.copyWith(
+            apiStatus: ApiStatus.success,
+            summaryDataModel: data.data,
+            apiIdentifier: 'GetUserBondsSummary',
+          );
+
+        },
+      );
+    } catch (e) {
+      state = state.copyWith(
+        apiStatus: ApiStatus.error,
+        drawResult: null,
+        resp: BaseResponseModel(status: false, message: e.toString()),
+        apiIdentifier: 'GetUserBondsSummary',
+      );
+    }
+  }
+
 }

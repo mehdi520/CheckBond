@@ -12,6 +12,7 @@ class DrawDetailsDataModel {
   String? second_prize_worth;
   String? third_prize_worth;
   List<BondDataModel>? bonds;
+  List<String>? userWonBonds;
 
   DrawDetailsDataModel({
     required this.draw_id,
@@ -20,7 +21,8 @@ class DrawDetailsDataModel {
     this.first_prize_worth,
     this.second_prize_worth,
     this.third_prize_worth,
-    this.bonds
+    this.bonds,
+    this.userWonBonds
   });
 
   factory DrawDetailsDataModel.fromJson(Map<String, dynamic> json) =>

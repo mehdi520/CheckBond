@@ -1,4 +1,5 @@
 import 'package:check_bond/data/models/bonds/data_model/draw_data_model.dart';
+import 'package:check_bond/data/models/bonds/data_model/draw_details_data_model.dart';
 import 'package:check_bond/infra/loader/overlay_service.dart';
 import 'package:check_bond/infra/utils/enums.dart';
 import 'package:check_bond/presentation/common_widgets/app_bars/basic_app_bar.dart';
@@ -9,6 +10,7 @@ import 'package:check_bond/presentation/providers/providers/bond_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../infra/configs/config_exports.dart';
 import '../../../infra/utils/utils_exports.dart';
 
 String normalize(String s) => s.replaceAll(RegExp(r'^0+'), '').trim();
@@ -248,94 +250,95 @@ class _DrawResultScreenState extends ConsumerState<DrawResultScreen> {
             ),
             const SizedBox(height: 16),
             // Matched Bound
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Builder(
-                builder: (context) {
-                  // Dummy user bonds
-                  final userBonds = [
-                    '268813',
-                    '009914',
-                    '123456',
-                    '959990',
-                    '000001',
-                  ];
-                  List<Map<String, String?>> matchedBonds =
-                      userBonds
-                          .map((bond) {
-                            String? position;
-                            for (final prize in drawResult.bonds ?? []) {
-                              if (normalize(prize.boundNo ?? '') ==
-                                  normalize(bond)) {
-                                position =
-                                    prize.position == 1
-                                        ? 'First Prize'
-                                        : (prize.position == 2
-                                            ? 'Second Prize'
-                                            : 'Third Prize');
-                                break;
-                              }
-                            }
-                            return {'bond': bond, 'position': position};
-                          })
-                          .where((e) => e['position'] != null)
-                          .toList();
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TitleMediumText(contentText: 'Your Saved Bonds'),
-                      const SizedBox(height: 8),
-                      if (matchedBonds.isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(
-                            "Sorry, Unfortunately your bonds didn't win in this draw. Wish you best of luck for next draw",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      else
-                        ...matchedBonds.map(
-                          (e) => Row(
-                            children: [
-                              BodyMediumText(
-                                contentText: e['bond']!,
-                                textColor: Colors.black87,
-                              ),
-                              const SizedBox(width: 12),
-                              BodyMediumText(
-                                contentText: e['position']!,
-                                textColor:
-                                    e['position'] == 'First Prize'
-                                        ? Colors.orange
-                                        : (e['position'] == 'Second Prize'
-                                            ? Colors.blue
-                                            : Colors.green),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  );
-                },
-              ),
+            _buildMatchedBondList(drawResult),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMatchedBondList(DrawDetailsDataModel? drawResult) {
+    if (drawResult == null || drawResult.userWonBonds == null || drawResult.userWonBonds!.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadowLight.withOpacity(0.1),
+              spreadRadius: 0,
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.sentiment_dissatisfied,
+                size: 48,
+                color: AppColors.textSecondary,
+              ),
+              const SizedBox(height: 16),
+              TitleMediumText(
+                contentText: 'Sorry! No bonds matched this time.',
+                textStyle: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const TitleMediumText(
+            contentText: 'Your Matched Bonds',
+            textStyle: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: drawResult.userWonBonds!.map((bondNumber) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: TitleMediumText(
+                  contentText: bondNumber,
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
